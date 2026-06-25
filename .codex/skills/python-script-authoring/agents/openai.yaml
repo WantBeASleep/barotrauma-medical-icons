@@ -1,0 +1,4 @@
+interface:
+  display_name: "Python Script Authoring"
+  short_description: "Project rules for Python utility scripts"
+  default_prompt: "Use $python-script-authoring to create a project Python utility script with help flags, relative paths, and README."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Barotrauma Modding"
+  short_description: "Barotrauma XML docs and mod workflow"
+  default_prompt: "Use $barotrauma-modding for Barotrauma XML, StatusEffect, content package, item, affliction, sprite/icon, or Workshop packaging tasks."

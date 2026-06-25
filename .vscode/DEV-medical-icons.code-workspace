@@ -1,0 +1,19 @@
+{
+  "folders": [
+    {
+      "name": "DEV-medical-icons",
+      "path": "../"
+    },
+  ],
+  "settings": {
+    "Lua.diagnostics.libraryFiles": "Opened",
+    "Lua.workspace.library": [
+      "${workspaceFolder}/../Barotrauma/LocalMods/Barotrauma-Lua-Annotations/Library/Client"
+      // "${workspaceFolder}/../Barotrauma/LocalMods/Barotrauma-Lua-Annotations/Library/Server"
+    ],
+    "Lua.workspace.preloadFileSize": 10000,
+    "Lua.workspace.maxPreload": 50000,
+    "Lua.diagnostics.disable": [],
+    "Lua.diagnostics.workspaceDelay": 300000,
+  }
+}

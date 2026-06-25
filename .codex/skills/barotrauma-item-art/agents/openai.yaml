@@ -1,0 +1,4 @@
+interface:
+  display_name: "Barotrauma Item Art"
+  short_description: "Generate Barotrauma item icons and sprites"
+  default_prompt: "Use $barotrauma-item-art to generate a five-file Barotrauma item art set."

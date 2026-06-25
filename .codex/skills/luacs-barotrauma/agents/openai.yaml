@@ -1,0 +1,4 @@
+interface:
+  display_name: "LuaCs Barotrauma"
+  short_description: "LuaCs hooks, APIs, and networking"
+  default_prompt: "Use $luacs-barotrauma for Barotrauma LuaCs scripts, hooks, networking, client/server logic, or C# API access from Lua."

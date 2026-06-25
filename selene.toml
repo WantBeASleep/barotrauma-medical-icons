@@ -1,0 +1,38 @@
+std = "lua52+selene_std_luacs_client"
+# std = "lua52+selene_std_luacs_server"
+
+exclude = [
+    "Lua/limanchel/medical_icons/generated/**",
+]
+
+[lints]
+almost_swapped = "deny"
+bad_string_escape = "deny"
+compare_nan = "deny"
+constant_table_comparison = "deny"
+divide_by_zero = "deny"
+duplicate_keys = "deny"
+empty_if = "deny"
+empty_loop = "deny"
+global_usage = "deny"
+high_cyclomatic_complexity = "deny"
+if_same_then_else = "deny"
+ifs_same_cond = "deny"
+incorrect_standard_library_use = "deny"
+invalid_lint_filter = "deny"
+mismatched_arg_count = "deny"
+mixed_table = "deny"
+multiple_statements = "deny"
+must_use = "deny"
+parenthese_conditions = "deny"
+shadowing = "deny"
+suspicious_reverse_loop = "deny"
+type_check_inside_call = "deny"
+unbalanced_assignments = "deny"
+undefined_variable = "deny"
+unscoped_variables = "deny"
+unused_variable = "deny"
+
+[config]
+high_cyclomatic_complexity = { maximum_complexity = 40 }
+multiple_statements = { one_line_if = "break-return-only" }

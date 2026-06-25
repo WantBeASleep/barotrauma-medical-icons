@@ -1,0 +1,43 @@
+[h1]QoL - Medical Icons[/h1]
+
+[h2]Why[/h2]
+
+Fuck the standard medical syringes. What a fucking brilliant decision to make 30 identical icons, so that in a critical situation, with a dying teammate in your hands, you have to frantically scan this smear with your eyes.
+
+[h2]About the Mod[/h2]
+
+[strike]This is a SERVER-SIDE mod; the host must be subscribed.[/strike]
+[b]This mod is CLIENT SIDE ONLY.[/b] Fuck XML <override>, this thing is [b]Lua powered[/b].
+
+The mod replaces all vanilla medical syringe icons with custom ones. Barotrauma has 5 medical classes: Medicine, Basic Chemicals, Toxins, Antidotes, Stimulants. The classes in the mod match the official wiki:
+[url=https://barotraumagame.com/wiki/Medical_Items]Medical Items[/url]
+
+Each medical class gets its own visual shape, and items inside that class are distinguished by colors and status symbols. The point is simple: you should be able to understand what the hell you are holding before your teammate finishes dying.
+
+[h2]Compatibility[/h2]
+
+The mod runs through Lua and swaps sprites on existing medical prefabs. It does not do a full XML override of those prefabs, so it should play nicely with basically any mod.
+
+Quirks, because of course there are quirks:
+[list]
+[*]It will overwrite medical icons from other XML mods [b]REGARDLESS OF PRIORITY[/b].
+[*]Another Lua mod can still override these icons if it has higher priority, meaning it is higher in the Barotrauma mod list.
+[/list]
+
+[h2]Editing the Mod[/h2]
+
+The Steam Workshop version contains only the files needed for the mod to work. If you want to poke the insides, change icons, rebuild atlases, or otherwise fuck with it properly, install the full local version into Barotrauma/LocalMods from GitHub:
+[url=https://github.com/WantBeASleep/MedicalIcons]Medical Icons[/url]
+
+The project structure is described in AGENTS.md.
+
+[h2]How It Was Made[/h2]
+
+I cannot fucking draw at all, and my sense of taste was pretty damn questionable too. The whole mod was written and drawn by the Codex 5.5 neural network (yes, I generated the images in Codex).
+
+Thanks to the creator of this mod for the inspiration and creative direction:
+https://steamcommunity.com/sharedfiles/filedetails/?id=3539579595
+
+Feedback is welcome. If something looks like shit or breaks in a weird way, say so.
+
+[hr][/hr]
