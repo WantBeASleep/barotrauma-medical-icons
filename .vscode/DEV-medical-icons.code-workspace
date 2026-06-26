@@ -4,12 +4,16 @@
       "name": "DEV-medical-icons",
       "path": "../"
     },
+    {
+      "name": "medical-icons",
+      "path": "../../medical-icons"
+    },
   ],
   "settings": {
-    "Lua.diagnostics.libraryFiles": "Opened",
+    "Lua.diagnostics.libraryFiles": "Disable",
     "Lua.workspace.library": [
-      "${workspaceFolder}/../Barotrauma/LocalMods/Barotrauma-Lua-Annotations/Library/Client"
-      // "${workspaceFolder}/../Barotrauma/LocalMods/Barotrauma-Lua-Annotations/Library/Server"
+      "${workspaceFolder}/../Barotrauma-Lua-Annotations/Library/Client"
+      // "${workspaceFolder}/../Barotrauma-Lua-Annotations/Library/Server"
     ],
     "Lua.workspace.preloadFileSize": 10000,
     "Lua.workspace.maxPreload": 50000,

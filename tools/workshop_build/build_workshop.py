@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import shutil
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
@@ -29,6 +30,7 @@ LOCALMODS_DIR = PROJECT_ROOT.parent
 DEV_PREFIX = "DEV"
 DEV_PREFIX_SEPARATORS = " -_"
 STEAM_WORKSHOP_ID = "3748775860"
+WORKSHOP_ENV = "prod"
 WORKSHOP_ALLOWLIST = (
     "Lua",
     "assets/icons.png",
@@ -159,6 +161,24 @@ def copy_workshop_filelist(source: Path, target: Path) -> None:
     tree.write(target, encoding="utf-8", xml_declaration=True, short_empty_elements=False)
 
 
+def set_workshop_lua_env(target_dir: Path) -> None:
+    main_lua = target_dir / "Lua" / "Autorun" / "main.lua"
+    if not main_lua.is_file():
+        fail(f"Copied Workshop Lua entrypoint not found: {main_lua}")
+
+    content = main_lua.read_text(encoding="utf-8")
+    updated, replacements = re.subn(
+        r'(?m)^(local\s+ENV\s*=\s*)"[^"]*"',
+        rf'\1"{WORKSHOP_ENV}"',
+        content,
+        count=1,
+    )
+    if replacements != 1:
+        fail(f"Expected exactly one local ENV assignment in {main_lua}.")
+
+    main_lua.write_text(updated, encoding="utf-8")
+
+
 def copy_entries(target_dir: Path, entries: list[CopyEntry]) -> None:
     if target_dir.exists():
         if not target_dir.is_dir():
@@ -174,6 +194,8 @@ def copy_entries(target_dir: Path, entries: list[CopyEntry]) -> None:
         else:
             entry.target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(entry.source, entry.target)
+
+    set_workshop_lua_env(target_dir)
 
 
 def main() -> None:

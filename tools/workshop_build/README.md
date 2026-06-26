@@ -67,6 +67,10 @@ The copied `filelist.xml` is adjusted for Workshop upload:
 - A leading `DEV` prefix is removed from the root `contentpackage` `name` attribute.
 - The root `contentpackage` gets `steamworkshopid="3748775860"`.
 
+The copied `Lua/Autorun/main.lua` is adjusted for Workshop runtime:
+
+- The `local ENV = "dev"` entrypoint setting is changed to `local ENV = "prod"`.
+
 ## Outputs
 
 The script creates or replaces one sibling folder under the parent `LocalMods` directory. Existing contents of that target folder are removed before copying the runtime files.

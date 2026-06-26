@@ -213,25 +213,25 @@ Print detailed validation output for every item.
 Shape:
 
 ```lua
----@alias MedicalIconsAtlasRect integer[]
+---@alias AtlasRect integer[]
 
----@class MedicalIconsAtlasRegion
----@field rect MedicalIconsAtlasRect
+---@class AtlasRegion
+---@field rect AtlasRect
 
----@class MedicalIconsAtlasItem
+---@class AtlasItem
 ---@field texture string
----@field icon MedicalIconsAtlasRegion
----@field sprite MedicalIconsAtlasRegion
+---@field icon AtlasRegion
+---@field sprite AtlasRegion
 
----@class MedicalIconsAtlasAssets
+---@class AtlasAssets
 ---@field icons string
 ---@field sprites string
 
----@class MedicalIconsAtlases
----@field assets MedicalIconsAtlasAssets
----@field items table<string, MedicalIconsAtlasItem>
+---@class Atlases
+---@field assets AtlasAssets
+---@field items table<string, AtlasItem>
 
----@type MedicalIconsAtlases
+---@type Atlases
 local atlases = {
     assets = {
         icons = 'assets/icons.png',

@@ -69,7 +69,9 @@ function logger.log(message, message_level, color)
             logger.console.NewMessage(text, color, false)
         end)
 
-        if ok then return end
+        if ok then
+            return
+        end
 
         print(
             string.format(
@@ -88,7 +90,9 @@ end
 ---@param message string
 ---@return nil
 function logger.debug(message)
-    if logger.level > level.debug then return end
+    if logger.level > level.debug then
+        return
+    end
 
     logger.log(message, level.debug, Color.Green)
 end
@@ -97,7 +101,9 @@ end
 ---@param message string
 ---@return nil
 function logger.info(message)
-    if logger.level > level.info then return end
+    if logger.level > level.info then
+        return
+    end
 
     logger.log(message, level.info, Color.Cyan)
 end
@@ -106,7 +112,9 @@ end
 ---@param message string
 ---@return nil
 function logger.warn(message)
-    if logger.level > level.warning then return end
+    if logger.level > level.warning then
+        return
+    end
 
     logger.log(message, level.warning, Color.Yellow)
 end
@@ -115,7 +123,9 @@ end
 ---@param message string
 ---@return nil
 function logger.error(message)
-    if logger.level > level.error then return end
+    if logger.level > level.error then
+        return
+    end
 
     logger.log(message, level.error, Color.Red)
 end
