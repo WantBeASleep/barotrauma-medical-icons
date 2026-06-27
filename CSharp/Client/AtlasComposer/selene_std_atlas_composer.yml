@@ -1,0 +1,32 @@
+---
+globals:
+  MedicalIcons:
+    AtlasComposer:
+      Compose:
+        args:
+          -
+            type: string
+          -
+            type: string
+          -
+            type: table
+        property: read-only
+      property: read-only
+    AtlasOverlayPackOperation:
+      any: true
+      property: read-only
+    AtlasOverlayApply:
+      any: true
+      property: read-only
+    AtlasComposerException:
+      Code:
+        any: true
+        property: read-only
+      Message:
+        any: true
+        property: read-only
+      InnerException:
+        any: true
+        property: read-only
+      property: read-only
+    property: read-only

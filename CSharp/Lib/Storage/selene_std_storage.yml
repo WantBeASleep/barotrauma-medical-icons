@@ -1,0 +1,51 @@
+---
+globals:
+  MedicalIcons:
+    Storage:
+      Exists:
+        args:
+          -
+            type: string
+        property: read-only
+      LoadString:
+        args:
+          -
+            type: string
+        property: read-only
+      SaveString:
+        args:
+          -
+            type: string
+          -
+            type: string
+        property: read-only
+      Delete:
+        args:
+          -
+            type: string
+        property: read-only
+      DeleteRecursiveExtension:
+        args:
+          -
+            type: string
+          -
+            type: string
+        property: read-only
+      GetFullPath:
+        args:
+          -
+            type: string
+        property: read-only
+      property: read-only
+    StorageException:
+      Code:
+        any: true
+        property: read-only
+      Message:
+        any: true
+        property: read-only
+      InnerException:
+        any: true
+        property: read-only
+      property: read-only
+    property: read-only
