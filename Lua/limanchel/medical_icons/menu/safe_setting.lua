@@ -12,8 +12,6 @@ local log
 ---@type Storage|nil
 local storage
 
-local storage_available = false
-
 -- The module always keeps the active settings in memory. Storage is only a
 -- persistence layer and can disappear without breaking the menu.
 ---@type settings
@@ -60,7 +58,6 @@ end
 ---@param err StorageError|any
 ---@return nil
 local function disable_storage(err)
-    storage_available = false
     storage = nil
 
     if log ~= nil and log.debug ~= nil then
@@ -70,7 +67,7 @@ end
 
 ---@return nil
 local function save_to_storage()
-    if not storage_available or storage == nil then
+    if storage == nil then
         return
     end
 
@@ -80,10 +77,10 @@ local function save_to_storage()
     end
 end
 
--- Refreshes the in-memory value from storage when storage is alive.
+-- Loads settings from storage once during init. Runtime reads use memory only.
 ---@return nil
-local function refresh_from_storage()
-    if not storage_available or storage == nil then
+local function load_from_storage()
+    if storage == nil then
         return
     end
 
@@ -118,7 +115,6 @@ function safe_setting.safe_init(logger)
     log = logger
     settings = shemas.settings.get_defaults()
     storage = nil
-    storage_available = false
 
     local ok, result = pcall(function()
         return dofile(LUA_PATH .. "/lib/storage/init.lua").new({
@@ -130,8 +126,7 @@ function safe_setting.safe_init(logger)
     if ok then
         ---@cast result Storage
         storage = result
-        storage_available = true
-        refresh_from_storage()
+        load_from_storage()
     elseif log ~= nil and log.debug ~= nil then
         log.debug(string.format("settings storage unavailable: %s", tostring(result)))
     end
@@ -139,7 +134,6 @@ end
 
 ---@return settings
 function safe_setting.safe_get_settings()
-    refresh_from_storage()
     return copy_settings(settings)
 end
 
