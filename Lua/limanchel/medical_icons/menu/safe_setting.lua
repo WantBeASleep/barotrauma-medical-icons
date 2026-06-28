@@ -1,0 +1,156 @@
+---@type string
+local LUA_PATH
+
+LUA_PATH = ...
+
+---@type shemas
+local shemas = dofile(LUA_PATH .. "/shemas.lua")
+
+---@type Logger
+local log
+
+---@type Storage|nil
+local storage
+
+local storage_available = false
+
+-- The module always keeps the active settings in memory. Storage is only a
+-- persistence layer and can disappear without breaking the menu.
+---@type settings
+local settings = {}
+
+-- Storage paths are relative to the C# MedicalIcons.Storage root.
+local STORAGE_TYPE_NAME = "MedicalIcons.Storage"
+local SETTINGS_PATH = "medical-icons/settings.json"
+
+---@class MenuSettings
+---@field safe_init fun(logger: Logger)
+---@field safe_get_settings fun(): settings
+---@field safe_save fun(new_settings: settings): boolean
+
+---@type MenuSettings
+local safe_setting = {}
+
+---@param value settings
+---@return settings
+local function copy_settings(value)
+    return {
+        version = value.version,
+        texturepack = value.texturepack,
+    }
+end
+
+---@param err StorageError|any
+---@return string
+local function get_storage_error(err)
+    if err == nil then
+        return "unknown"
+    end
+
+    local ok, message = pcall(function()
+        return err.message or err.code
+    end)
+    if ok and message ~= nil then
+        return tostring(message)
+    end
+
+    return tostring(err)
+end
+
+---@param err StorageError|any
+---@return nil
+local function disable_storage(err)
+    storage_available = false
+    storage = nil
+
+    if log ~= nil and log.debug ~= nil then
+        log.debug(string.format("settings storage disabled: %s", get_storage_error(err)))
+    end
+end
+
+---@return nil
+local function save_to_storage()
+    if not storage_available or storage == nil then
+        return
+    end
+
+    local ok, err = storage.save_string(SETTINGS_PATH, shemas.settings.serialize(settings))
+    if not ok then
+        disable_storage(err)
+    end
+end
+
+-- Refreshes the in-memory value from storage when storage is alive.
+---@return nil
+local function refresh_from_storage()
+    if not storage_available or storage == nil then
+        return
+    end
+
+    local content, err = storage.load_string(SETTINGS_PATH)
+    if err ~= nil then
+        disable_storage(err)
+        return
+    end
+
+    if content == nil then
+        save_to_storage()
+        return
+    end
+
+    local ok, loaded_settings = pcall(shemas.settings.parse, content)
+    if ok then
+        settings = copy_settings(loaded_settings)
+        return
+    end
+
+    -- Bad stored data is the only case where we intentionally reset to defaults.
+    settings = shemas.settings.get_defaults()
+    if log ~= nil and log.warn ~= nil then
+        log.warn(string.format("invalid settings in storage; using defaults: %s", tostring(loaded_settings)))
+    end
+    save_to_storage()
+end
+
+---@param logger Logger
+---@return nil
+function safe_setting.safe_init(logger)
+    log = logger
+    settings = shemas.settings.get_defaults()
+    storage = nil
+    storage_available = false
+
+    local ok, result = pcall(function()
+        return dofile(LUA_PATH .. "/lib/storage/init.lua").new({
+            log = log,
+            type_name = STORAGE_TYPE_NAME,
+        })
+    end)
+
+    if ok then
+        ---@cast result Storage
+        storage = result
+        storage_available = true
+        refresh_from_storage()
+    elseif log ~= nil and log.debug ~= nil then
+        log.debug(string.format("settings storage unavailable: %s", tostring(result)))
+    end
+end
+
+---@return settings
+function safe_setting.safe_get_settings()
+    refresh_from_storage()
+    return copy_settings(settings)
+end
+
+---@param new_settings settings
+---@throws shemas_error
+---@return boolean
+function safe_setting.safe_save(new_settings)
+    shemas.settings.validate(new_settings)
+    settings = copy_settings(new_settings)
+    save_to_storage()
+    return true
+end
+
+return safe_setting
