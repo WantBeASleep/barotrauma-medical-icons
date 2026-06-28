@@ -1,6 +1,7 @@
 ---@alias LoggerLevel integer
 
 ---@class LoggerLevels
+---@field trace LoggerLevel
 ---@field debug LoggerLevel
 ---@field info LoggerLevel
 ---@field warning LoggerLevel
@@ -8,6 +9,7 @@
 
 ---@type LoggerLevels
 local level = {
+    trace = -1,
     debug = 0,
     info = 1,
     warning = 2,
@@ -16,6 +18,7 @@ local level = {
 
 ---@type table<LoggerLevel, string>
 local level_label = {
+    [level.trace] = "TRACE",
     [level.debug] = "DEBUG",
     [level.info] = "INFO",
     [level.warning] = "WARN",
@@ -84,6 +87,17 @@ function logger.log(message, message_level, color)
     end
 
     print(text)
+end
+
+---Writes a trace message when the logger level allows it.
+---@param message string
+---@return nil
+function logger.trace(message)
+    if logger.level > level.trace then
+        return
+    end
+
+    logger.log(message, level.trace, Color.Gray)
 end
 
 ---Writes a debug message when the logger level allows it.
