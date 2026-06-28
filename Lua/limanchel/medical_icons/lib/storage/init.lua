@@ -21,6 +21,7 @@
 
 ---@class Storage
 ---@field exists fun(path: string): boolean|nil, StorageError|nil
+---Returns nil without a StorageError when the file does not exist.
 ---@field load_string fun(path: string): string|nil, StorageError|nil
 ---@field save_string fun(path: string, content: string): boolean, StorageError|nil
 ---@field delete fun(path: string): boolean|nil, StorageError|nil
@@ -268,7 +269,7 @@ function storage_lib.new(options)
         return exists, nil
     end
 
-    ---Loads a text file from storage, returning an empty string when C# reports a missing file.
+    ---Loads a text file from storage. Returns nil without a StorageError when the file does not exist.
     ---@param path string
     ---@return string|nil, StorageError|nil
     function storage_api.load_string(path)
@@ -282,7 +283,12 @@ function storage_lib.new(options)
             return nil, err
         end
 
-        local content = tostring(result or "")
+        if result == nil then
+            tracing.success(OPERATION.load_string, path, "missing=true")
+            return nil, nil
+        end
+
+        local content = tostring(result)
         tracing.success(OPERATION.load_string, path, string.format("bytes=%d", string.len(content)))
         return content, nil
     end

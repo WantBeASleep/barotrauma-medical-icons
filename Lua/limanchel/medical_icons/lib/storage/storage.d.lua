@@ -27,9 +27,9 @@ local Storage = {}
 function Storage.Exists(path) end
 
 ---Reads a text file from Barotrauma's storage folder.
----Returns an empty string when the file does not exist.
+---Returns nil when the file does not exist.
 ---@param path string
----@return string
+---@return string|nil
 ---@throws MedicalIcons.StorageException
 function Storage.LoadString(path) end
 

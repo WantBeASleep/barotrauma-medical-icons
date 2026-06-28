@@ -39,15 +39,14 @@ namespace MedicalIcons
         }
 
         // Reads a text file from Barotrauma's storage folder.
-        // Missing files are treated as an empty string because this is convenient
-        // for optional config/cache files: Lua can parse defaults without first
-        // checking Exists().
+        // Missing files return null so Lua receives nil and can distinguish
+        // "missing file" from an existing empty file.
         public static string LoadString(string path)
         {
             string fullPath = ResolvePath(path);
             if (!File.Exists(fullPath))
             {
-                return string.Empty;
+                return null;
             }
 
             try
