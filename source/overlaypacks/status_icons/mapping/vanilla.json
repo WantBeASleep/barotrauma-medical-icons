@@ -1,0 +1,138 @@
+﻿[
+    {
+        "overlay":  "internaldamage",
+        "item":  "pomegrenadeextract"
+    },
+    {
+        "overlay":  "internaldamage",
+        "item":  "antidama1"
+    },
+    {
+        "overlay":  "internaldamage",
+        "item":  "antidama2"
+    },
+    {
+        "overlay":  "vigor",
+        "item":  "deusizine"
+    },
+    {
+        "overlay":  "oxygenlow",
+        "item":  "liquidoxygenite"
+    },
+    {
+        "overlay":  "adrenalinerush",
+        "item":  "adrenaline"
+    },
+    {
+        "overlay":  "internaldamage",
+        "item":  "opium"
+    },
+    {
+        "overlay":  "stabilozineeffect",
+        "item":  "stabilozine"
+    },
+    {
+        "overlay":  "infection",
+        "item":  "antibiotics"
+    },
+    {
+        "overlay":  "poison",
+        "item":  "cyanide"
+    },
+    {
+        "overlay":  "poison",
+        "item":  "sufforin"
+    },
+    {
+        "overlay":  "poison",
+        "item":  "morbusine"
+    },
+    {
+        "overlay":  "poison",
+        "item":  "deliriumine"
+    },
+    {
+        "overlay":  "poison_paralycs",
+        "item":  "paralyzant"
+    },
+    {
+        "overlay":  "radiationsickness",
+        "item":  "radiotoxin"
+    },
+    {
+        "overlay":  "huskinfection",
+        "item":  "huskeggs"
+    },
+    {
+        "overlay":  "acidburn",
+        "item":  "sulphuricacidsyringe"
+    },
+    {
+        "overlay":  "internaldamage2",
+        "item":  "raptorbaneextract"
+    },
+    {
+        "overlay":  "acidreaction",
+        "item":  "europabrew"
+    },
+    {
+        "overlay":  "stun",
+        "item":  "chloralhydrate"
+    },
+    {
+        "overlay":  "poison",
+        "item":  "cyanideantidote"
+    },
+    {
+        "overlay":  "poison",
+        "item":  "sufforinantidote"
+    },
+    {
+        "overlay":  "poison",
+        "item":  "morbusineantidote"
+    },
+    {
+        "overlay":  "poison",
+        "item":  "deliriumineantidote"
+    },
+    {
+        "overlay":  "poison_paralycs",
+        "item":  "antiparalysis"
+    },
+    {
+        "overlay":  "radiationsickness",
+        "item":  "antirad"
+    },
+    {
+        "overlay":  "huskinfection",
+        "item":  "calyxanide"
+    },
+    {
+        "overlay":  "opiatewithdrawal",
+        "item":  "antinarc"
+    },
+    {
+        "overlay":  "psychosis",
+        "item":  "antipsychosis"
+    },
+    {
+        "overlay":  "haste",
+        "item":  "meth"
+    },
+    {
+        "overlay":  "vigor",
+        "item":  "steroids"
+    },
+    {
+        "overlay":  "adrenalinerush",
+        "item":  "hyperzine"
+    },
+    {
+        "overlay":  "combatstimulant",
+        "item":  "combatstimulantsyringe"
+    },
+    {
+        "overlay":  "pressurestabilized",
+        "item":  "pressurestabilizer"
+    }
+]

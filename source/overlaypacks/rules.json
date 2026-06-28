@@ -1,0 +1,18 @@
+{
+  "status_icons": {
+    "default": {
+      "slots": [
+        "top-left",
+        "bottom-right"
+      ]
+    }
+  },
+  "vanilla": {
+    "default": {
+      "slots": [
+        "top-left",
+        "bottom-right"
+      ]
+    }
+  }
+}
