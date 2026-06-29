@@ -1,4 +1,4 @@
----@alias overlay_availability_slot
+---@alias overlay_slot
 ---| '"top-left"'
 ---| '"top-right"'
 ---| '"bottom-left"'

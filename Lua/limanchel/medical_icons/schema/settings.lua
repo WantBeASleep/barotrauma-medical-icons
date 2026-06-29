@@ -25,7 +25,7 @@ local defaults = {
 
 ---@class overlay_setting
 ---@field overlaypack string
----@field slot overlay_availability_slot
+---@field slot overlay_slot
 
 ---@class settings_schema
 ---@field get_defaults fun(): settings
