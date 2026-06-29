@@ -1,4 +1,4 @@
-local SETTINGS_ACTUAL_VERSION = 2
+local SETTINGS_ACTUAL_VERSION = 3
 local ERROR_VERSION_MISMATCH = "version_mismatch"
 local _, LUA_PATH = ...
 
@@ -15,19 +15,22 @@ local schema_utils = assert(loadfile(LUA_PATH .. "/schema/utils.lua"))(nil, LUA_
 local defaults = {
     version = SETTINGS_ACTUAL_VERSION,
     texturepack = "default",
-    overlays = {},
+    overlaypacks = {},
 }
 
 ---@class settings
 ---@field version integer
 ---@field texturepack string
----@field overlays overlay_setting[]
+---@field overlaypacks overlaypack_setting[]
 
----@class overlay_setting
----@field overlaypack string
----@field slot overlay_slot
+---@class overlaypack_setting
+---@field name string
+---@field x number
+---@field y number
+---@field scale number
 
 ---@class settings_schema
+---@field copy fun(value: settings): settings
 ---@field get_defaults fun(): settings
 ---@field serialize fun(value: settings): string
 ---@field validate fun(value: table)
@@ -35,6 +38,26 @@ local defaults = {
 
 ---@type settings_schema
 local schema = {}
+
+---@param value settings
+---@return settings
+function schema.copy(value)
+    local overlaypacks = {}
+    for _, overlaypack in ipairs(value.overlaypacks or {}) do
+        table.insert(overlaypacks, {
+            name = overlaypack.name,
+            x = overlaypack.x,
+            y = overlaypack.y,
+            scale = overlaypack.scale,
+        })
+    end
+
+    return {
+        version = value.version,
+        texturepack = value.texturepack,
+        overlaypacks = overlaypacks,
+    }
+end
 
 ---@return settings
 function schema.get_defaults()
@@ -55,12 +78,12 @@ function schema.validate(value)
     end
 
     for key in pairs(value) do
-        if key ~= "version" and key ~= "texturepack" and key ~= "overlays" then
+        if key ~= "version" and key ~= "texturepack" and key ~= "overlaypacks" then
             error(consts.ERROR_INVALID_SCHEMA, 0)
         end
     end
 
-    if value.version == nil or value.texturepack == nil or value.overlays == nil then
+    if value.version == nil or value.texturepack == nil or value.overlaypacks == nil then
         error(consts.ERROR_INVALID_SCHEMA, 0)
     end
 
@@ -72,41 +95,30 @@ function schema.validate(value)
         error(consts.ERROR_INVALID_SCHEMA, 0)
     end
 
-    if not utils.is_array(value.overlays) then
+    if not utils.is_array(value.overlaypacks) then
         error(consts.ERROR_INVALID_SCHEMA, 0)
     end
 
-    for _, overlay in ipairs(value.overlays) do
-        if type(overlay) ~= "table" then
+    for _, overlaypack in ipairs(value.overlaypacks) do
+        if type(overlaypack) ~= "table" then
             error(consts.ERROR_INVALID_SCHEMA, 0)
         end
 
-        for key in pairs(overlay) do
-            if key ~= "overlaypack" and key ~= "slot" then
+        for key in pairs(overlaypack) do
+            if key ~= "name" and key ~= "x" and key ~= "y" and key ~= "scale" then
                 error(consts.ERROR_INVALID_SCHEMA, 0)
             end
         end
 
         if
-            not utils.is_non_empty_string(overlay.overlaypack)
-            or (
-                overlay.slot ~= "top-left"
-                and overlay.slot ~= "top-right"
-                and overlay.slot ~= "bottom-left"
-                and overlay.slot ~= "bottom-right"
-            )
+            not utils.is_non_empty_string(overlaypack.name)
+            or type(overlaypack.x) ~= "number"
+            or type(overlaypack.y) ~= "number"
+            or type(overlaypack.scale) ~= "number"
+            or overlaypack.scale <= 0
         then
             error(consts.ERROR_INVALID_SCHEMA, 0)
         end
-    end
-
-    local occupied_slots = {}
-    for _, overlay in ipairs(value.overlays) do
-        if occupied_slots[overlay.slot] == true then
-            error(consts.ERROR_INVALID_SCHEMA, 0)
-        end
-
-        occupied_slots[overlay.slot] = true
     end
 end
 
