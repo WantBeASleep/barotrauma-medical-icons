@@ -4,12 +4,12 @@
 
 Builds runtime texturepack and overlaypack assets from `source` into `assets`.
 
-The script packs every source texturepack into separate item icon and sprite atlases, writes a texturepack mapping JSON file with atlas rectangles, packs every overlaypack into an overlay atlas, and copies overlay mapping JSON files plus `rules.json` from `source/overlaypacks`.
+The script packs every source texturepack into separate item icon and sprite atlases, writes an item atlas JSON file with atlas rectangles, packs every overlaypack into an overlay atlas, and copies item overlay JSON files plus `availability.json` from `source/overlaypacks`.
 
 It also writes simple package indexes:
 
-- `assets/texturepacks/list.json`
-- `assets/overlaypacks/list.json`
+- `assets/texturepacks/index.json`
+- `assets/overlaypacks/index.json`
 
 ## Usage
 
@@ -57,27 +57,30 @@ Texturepack inputs:
 
 Texturepack outputs:
 
-- `assets/texturepacks/list.json`
+- `assets/texturepacks/index.json`
 - `assets/texturepacks/<texturepack_name>/icons.png`
 - `assets/texturepacks/<texturepack_name>/sprites.png`
-- `assets/texturepacks/<texturepack_name>/mapping.json`
+- `assets/texturepacks/<texturepack_name>/item_atlas.json`
 
 Overlaypack inputs:
 
-- `source/overlaypacks/rules.json`
+- `source/overlaypacks/availability.json`
 - `source/overlaypacks/<overlaypack_name>/overlays/*.png`
-- `source/overlaypacks/<overlaypack_name>/mapping/<texturepack_name>.json`
+- `source/overlaypacks/<overlaypack_name>/item_overlays/<texturepack_name>.json`
 
 Overlaypack outputs:
 
-- `assets/overlaypacks/list.json`
-- `assets/overlaypacks/rules.json`
+- `assets/overlaypacks/index.json`
+- `assets/overlaypacks/availability.json`
 - `assets/overlaypacks/<overlaypack_name>/atlas.png`
-- `assets/overlaypacks/<overlaypack_name>/mapping/<texturepack_name>.json`
+- `assets/overlaypacks/<overlaypack_name>/overlay_atlas.json`
+- `assets/overlaypacks/<overlaypack_name>/item_overlays/<texturepack_name>.json`
 
 ## Notes
 
 - Item icons are packed into 64x64 cells. Non-64x64 source icons produce a warning and are resized in memory for the atlas; source files are not modified.
 - Sprite and overlay atlas dimensions are padded to multiples of 4.
-- Overlay mapping JSON files must be arrays of objects with `overlay` and `item` string fields. Referenced overlays and texturepack items are checked, then mapping files are copied unchanged.
-- `rules.json` is copied unchanged after JSON validation. Its top-level keys must match all discovered overlaypack names.
+- `item_atlas.json` stores each item's icon and sprite rectangles inside the texturepack atlases.
+- `overlay_atlas.json` stores each overlay's rectangle inside the overlaypack atlas.
+- Item overlay JSON files must be arrays of objects with `overlay` and `item` string fields. Referenced overlays and texturepack items are checked, then files are copied unchanged.
+- `availability.json` is copied unchanged after JSON validation. Its top-level keys must match all discovered overlaypack names.

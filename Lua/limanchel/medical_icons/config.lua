@@ -15,47 +15,51 @@
 ---@class ItemData
 ---@field holdable HoldableData|nil
 
----@class Config
----@field defaults ConfigDefaults
+---@class TexturepackConfig
 ---@field textures table<string, TextureData>
----@field items table<string, ItemData>
+
+---@class Config
+---@field default_settings ConfigDefaults
+---@field texturepacks table<string, TexturepackConfig>
 
 ---@type Config
 local config = {
-    defaults = {
+    default_settings = {
         icon_origin = Vector2(0.5, 0.5),
         sprite_origin = Vector2(0.5, 0.5),
         sprite_rotation = 0,
         sprite_depth = 0.6,
     },
 
-    textures = {
-        ampoule = {
-            holdable = {
-                hold_angle = 7,
-                handle1 = Vector2(-3, -7),
-                handle2 = Vector2(-3, -7),
-            },
-        },
+    texturepacks = {
+        default = {
+            textures = {
+                ampoule = {
+                    holdable = {
+                        hold_angle = 7,
+                        handle1 = Vector2(-3, -7),
+                        handle2 = Vector2(-3, -7),
+                    },
+                },
 
-        pocket_injector = {
-            holdable = {
-                hold_angle = 7,
-                handle1 = Vector2(-2, -8),
-                handle2 = Vector2(-2, -8),
-            },
-        },
+                pocket_injector = {
+                    holdable = {
+                        hold_angle = 7,
+                        handle1 = Vector2(-2, -8),
+                        handle2 = Vector2(-2, -8),
+                    },
+                },
 
-        vial = {
-            holdable = {
-                hold_angle = 7,
-                handle1 = Vector2(-2, -9),
-                handle2 = Vector2(-2, -9),
+                vial = {
+                    holdable = {
+                        hold_angle = 7,
+                        handle1 = Vector2(-2, -9),
+                        handle2 = Vector2(-2, -9),
+                    },
+                },
             },
         },
     },
-
-    items = {},
 }
 
 return config

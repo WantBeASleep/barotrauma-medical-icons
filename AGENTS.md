@@ -18,7 +18,7 @@ Runtime and publishing files:
 
 Development and source areas:
 
-- `source/textures` - item icon/sprite sources and final per-item texture inputs.
+- `source/texturepacks` - item texturepacks, basetexture sources, and final per-item texture inputs.
 - `source/status_icons` - status icon source PNGs.
 - `source/fonts` - fonts used by preview/generation scripts.
 - `source/paint_dotnet` - paint.net working files.
@@ -38,7 +38,7 @@ python tools/build/build_project.py
 
 The build formats and lints Lua, validates item assets, packs item icon/sprite atlases into `assets`, overlays status icons by default, and generates Lua atlas data under `Lua/limanchel/medical_icons/generated`.
 
-Run the mod build workflow when a change affects runtime data or generated assets: item icons/sprites under `source/textures/*/items/*`, status icon PNGs under `source/status_icons`, status icon mappings such as `tools/build/statusicons.csv`, atlas packing behavior, or scripts that generate atlas data.
+Run the mod build workflow when a change affects runtime data or generated assets: item icons/sprites under `source/texturepacks/*/*/items/*`, status icon PNGs under `source/status_icons`, status icon mappings such as `tools/build/statusicons.csv`, atlas packing behavior, or scripts that generate atlas data.
 
 ## Lua Format
 

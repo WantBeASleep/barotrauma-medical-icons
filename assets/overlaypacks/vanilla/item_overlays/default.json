@@ -1,0 +1,138 @@
+﻿[
+    {
+        "overlay":  "adrenaline",
+        "item":  "adrenaline"
+    },
+    {
+        "overlay":  "antibiotics",
+        "item":  "antibiotics"
+    },
+    {
+        "overlay":  "antidama1",
+        "item":  "antidama1"
+    },
+    {
+        "overlay":  "antidama2",
+        "item":  "antidama2"
+    },
+    {
+        "overlay":  "antinarc",
+        "item":  "antinarc"
+    },
+    {
+        "overlay":  "antiparalysis",
+        "item":  "antiparalysis"
+    },
+    {
+        "overlay":  "antipsychosis",
+        "item":  "antipsychosis"
+    },
+    {
+        "overlay":  "antirad",
+        "item":  "antirad"
+    },
+    {
+        "overlay":  "calyxanide",
+        "item":  "calyxanide"
+    },
+    {
+        "overlay":  "chloralhydrate",
+        "item":  "chloralhydrate"
+    },
+    {
+        "overlay":  "combatstimulantsyringe",
+        "item":  "combatstimulantsyringe"
+    },
+    {
+        "overlay":  "cyanide",
+        "item":  "cyanide"
+    },
+    {
+        "overlay":  "cyanideantidote",
+        "item":  "cyanideantidote"
+    },
+    {
+        "overlay":  "deliriumine",
+        "item":  "deliriumine"
+    },
+    {
+        "overlay":  "deliriumineantidote",
+        "item":  "deliriumineantidote"
+    },
+    {
+        "overlay":  "deusizine",
+        "item":  "deusizine"
+    },
+    {
+        "overlay":  "europabrew",
+        "item":  "europabrew"
+    },
+    {
+        "overlay":  "huskeggs",
+        "item":  "huskeggs"
+    },
+    {
+        "overlay":  "hyperzine",
+        "item":  "hyperzine"
+    },
+    {
+        "overlay":  "liquidoxygenite",
+        "item":  "liquidoxygenite"
+    },
+    {
+        "overlay":  "meth",
+        "item":  "meth"
+    },
+    {
+        "overlay":  "morbusine",
+        "item":  "morbusine"
+    },
+    {
+        "overlay":  "morbusineantidote",
+        "item":  "morbusineantidote"
+    },
+    {
+        "overlay":  "opium",
+        "item":  "opium"
+    },
+    {
+        "overlay":  "paralyzant",
+        "item":  "paralyzant"
+    },
+    {
+        "overlay":  "pomegrenadeextract",
+        "item":  "pomegrenadeextract"
+    },
+    {
+        "overlay":  "pressurestabilizer",
+        "item":  "pressurestabilizer"
+    },
+    {
+        "overlay":  "radiotoxin",
+        "item":  "radiotoxin"
+    },
+    {
+        "overlay":  "raptorbaneextract",
+        "item":  "raptorbaneextract"
+    },
+    {
+        "overlay":  "stabilozine",
+        "item":  "stabilozine"
+    },
+    {
+        "overlay":  "steroids",
+        "item":  "steroids"
+    },
+    {
+        "overlay":  "sufforin",
+        "item":  "sufforin"
+    },
+    {
+        "overlay":  "sufforinantidote",
+        "item":  "sufforinantidote"
+    },
+    {
+        "overlay":  "sulphuricacidsyringe",
+        "item":  "sulphuricacidsyringe"
+    }
+]

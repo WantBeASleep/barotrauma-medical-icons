@@ -33,7 +33,7 @@ python tools/preview/content_showcase/build_content_showcase.py --dry-run
 
 ## Inputs And Outputs
 
-Reads raw texture icons from `source/textures` and status-overlaid item icons from `tools/build/status_icons`.
+Reads raw basetexture icons from `source/texturepacks/default/*/base` and status-overlaid item icons from `tools/build/status_icons`.
 
 Writes:
 

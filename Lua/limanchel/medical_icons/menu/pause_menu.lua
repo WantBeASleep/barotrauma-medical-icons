@@ -7,9 +7,9 @@ local log
 -- pause_menu.lua is loaded as a small adapter around Barotrauma's built-in
 -- ESC pause menu. The real Medical Icons settings window is owned by the
 -- controller/view pair; this module only adds and synchronizes the entry button.
-controller, log = ...
 
 ---@class PauseMenu
+---@field init fun(menu_controller: MenuController, logger: Logger)
 ---@field force_open fun()
 ---@field sync_button fun()
 
@@ -27,6 +27,14 @@ local PAUSE_MENU_LIST_USER_DATA = "PauseMenuList"
 
 -- Pause menu buttol label
 local PAUSE_MENU_BUTTON_LABEL = "Medical Icons"
+
+---@param menu_controller MenuController
+---@param logger Logger
+---@return nil
+function pause_menu.init(menu_controller, logger)
+    controller = menu_controller
+    log = logger
+end
 
 ---@param component Barotrauma.GUIComponent
 ---@return Barotrauma.GUIComponent[]
