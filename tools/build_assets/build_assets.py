@@ -27,7 +27,6 @@ DEFAULT_ASSETS_DIR = PROJECT_ROOT / "assets"
 PACK_INDEX_NAME = "index.json"
 ITEM_ATLAS_NAME = "item_atlas.json"
 OVERLAY_ATLAS_NAME = "overlay_atlas.json"
-OVERLAY_AVAILABILITY_NAME = "availability.json"
 ITEM_OVERLAYS_DIR_NAME = "item_overlays"
 ICON_SIZE = 64
 
@@ -445,47 +444,44 @@ def copy_item_overlays(source_dir: Path, destination_dir: Path, dry_run: bool) -
         copy_file(source, destination_dir / source.name, dry_run)
 
 
-def validate_availability_json(path: Path, overlaypack_index: list[str]) -> None:
-    if not path.is_file():
-        fail(f"Missing overlaypack availability file: {rel(path)}")
-    with path.open("r", encoding="utf-8") as handle:
-        data = json.load(handle)
-    if not isinstance(data, dict):
-        fail(f"Overlaypack availability JSON must be an object: {rel(path)}")
+def validate_item_overlays_coverage(source_dir: Path, texturepacks: dict[str, list[ItemAsset]]) -> list[Path]:
+    if not source_dir.is_dir():
+        fail(f"Missing item overlays directory: {rel(source_dir)}")
 
-    expected = set(overlaypack_index)
-    actual = set(data)
+    item_overlays_files = sorted(source_dir.glob("*.json"))
+    actual = {path.stem for path in item_overlays_files}
+    expected = set(texturepacks)
+
     missing = sorted(expected - actual)
     unknown = sorted(actual - expected)
     if missing:
-        fail(f"{rel(path)} is missing overlaypack availability entry/entries: {', '.join(missing)}")
+        fail(f"{rel(source_dir)} is missing item overlay mapping(s): {', '.join(missing)}")
     if unknown:
-        fail(f"{rel(path)} contains unknown overlaypack availability entry/entries: {', '.join(unknown)}")
+        fail(f"{rel(source_dir)} contains unknown texturepack mapping(s): {', '.join(unknown)}")
+
+    return item_overlays_files
 
 
 def build_overlaypacks(args: argparse.Namespace, texturepacks: dict[str, list[ItemAsset]]) -> None:
     out_root = args.assets_dir / "overlaypacks"
-    availability_path = args.overlaypacks_dir / OVERLAY_AVAILABILITY_NAME
     overlaypack_dirs = sorted(
         path for path in args.overlaypacks_dir.iterdir() if path.is_dir()
     )
     if not overlaypack_dirs:
         fail(f"No overlaypacks found under {rel(args.overlaypacks_dir)}")
     overlaypack_index = [path.name for path in overlaypack_dirs]
-    validate_availability_json(availability_path, overlaypack_index)
 
     if args.clean:
         clean_dir(out_root, args.dry_run)
 
     write_name_list_json(out_root / PACK_INDEX_NAME, overlaypack_index, args.dry_run)
-    copy_file(availability_path, out_root / OVERLAY_AVAILABILITY_NAME, args.dry_run)
 
     for overlaypack_dir in overlaypack_dirs:
         name = overlaypack_dir.name
         overlays = discover_overlay_pngs(overlaypack_dir / "overlays")
         overlay_ids = {identifier for identifier, _, _ in overlays}
         item_overlays_dir = overlaypack_dir / ITEM_OVERLAYS_DIR_NAME
-        for item_overlays_path in sorted(item_overlays_dir.glob("*.json")):
+        for item_overlays_path in validate_item_overlays_coverage(item_overlays_dir, texturepacks):
             validate_item_overlays(item_overlays_path, overlay_ids, texturepacks)
 
         atlas, entries = build_shelf_atlas(overlays, args.overlay_atlas_width)

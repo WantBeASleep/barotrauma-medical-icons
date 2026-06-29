@@ -4,7 +4,7 @@
 
 Builds runtime texturepack and overlaypack assets from `source` into `assets`.
 
-The script packs every source texturepack into separate item icon and sprite atlases, writes an item atlas JSON file with atlas rectangles, packs every overlaypack into an overlay atlas, and copies item overlay JSON files plus `availability.json` from `source/overlaypacks`.
+The script packs every source texturepack into separate item icon and sprite atlases, writes an item atlas JSON file with atlas rectangles, packs every overlaypack into an overlay atlas, and copies item overlay JSON files from `source/overlaypacks`.
 
 It also writes simple package indexes:
 
@@ -64,14 +64,12 @@ Texturepack outputs:
 
 Overlaypack inputs:
 
-- `source/overlaypacks/availability.json`
 - `source/overlaypacks/<overlaypack_name>/overlays/*.png`
 - `source/overlaypacks/<overlaypack_name>/item_overlays/<texturepack_name>.json`
 
 Overlaypack outputs:
 
 - `assets/overlaypacks/index.json`
-- `assets/overlaypacks/availability.json`
 - `assets/overlaypacks/<overlaypack_name>/atlas.png`
 - `assets/overlaypacks/<overlaypack_name>/overlay_atlas.json`
 - `assets/overlaypacks/<overlaypack_name>/item_overlays/<texturepack_name>.json`
@@ -82,5 +80,6 @@ Overlaypack outputs:
 - Sprite and overlay atlas dimensions are padded to multiples of 4.
 - `item_atlas.json` stores each item's icon and sprite rectangles inside the texturepack atlases.
 - `overlay_atlas.json` stores each overlay's rectangle inside the overlaypack atlas.
+- Each overlaypack must provide one item overlay JSON file for every discovered texturepack.
 - Item overlay JSON files must be arrays of objects with `overlay` and `item` string fields. Referenced overlays and texturepack items are checked, then files are copied unchanged.
-- `availability.json` is copied unchanged after JSON validation. Its top-level keys must match all discovered overlaypack names.
+- Overlaypacks are not restricted to specific texturepacks by the build pipeline. Runtime/user settings decide which overlaypacks are active.
