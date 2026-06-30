@@ -1,8 +1,9 @@
-std = "lua52+selene_std_luacs_client"
+std = "lua52+selene_std_luacs_client+Lua/limanchel/medical_icons/lib/storage/selene_std_storage+Lua/limanchel/medical_icons/csharp/atlas_composer/selene_std_atlas_composer"
 # std = "lua52+selene_std_luacs_server"
 
 exclude = [
     "Lua/limanchel/medical_icons/generated/**",
+    "Lua/**/*.d.lua",
 ]
 
 [lints]

@@ -13,32 +13,39 @@ Runtime and publishing files:
 - `workshop_description_ru.bbcode` - Russian Steam Workshop description, similar to a Workshop-facing README.
 - `Lua/Autorun` - LuaCs autorun entrypoints.
 - `Lua/limanchel/medical_icons` - main Lua module namespace.
-- `Lua/limanchel/medical_icons/generated` - generated Lua data used by the runtime.
 - `assets` - generated runtime atlases and other assets loaded by the mod.
 
 Development and source areas:
 
-- `source/textures` - item icon/sprite sources and final per-item texture inputs.
+- `source/texturepacks` - item texturepacks, basetexture sources, and final per-item texture inputs.
 - `source/status_icons` - status icon source PNGs.
 - `source/fonts` - fonts used by preview/generation scripts.
 - `source/paint_dotnet` - paint.net working files.
 - `preview/source` - source images for preview generation.
-- `tools/build` - whole-project build and validation scripts.
+- `tools/build_assets` - asset build and validation scripts.
 - `tools/lualint` - Lua lint wrapper around the project-local Selene binary.
 - `tools/luafmt` - Lua formatting wrapper around the project-local StyLua binary.
 - `bin` - project-local helper executables such as Selene and StyLua.
 - `preview` - generated development and Workshop preview images.
 
 ## Build Workflow
-The canonical build command is:
+The canonical asset build command is:
 
 ```powershell
-python tools/build/build_project.py
+python tools/build_assets/build_assets.py
 ```
 
-The build formats and lints Lua, validates item assets, packs item icon/sprite atlases into `assets`, overlays status icons by default, and generates Lua atlas data under `Lua/limanchel/medical_icons/generated`.
+The asset build validates source item and overlay assets, then writes generated runtime assets under `assets`. It does not format or lint Lua code.
 
-Run the mod build workflow when a change affects runtime data or generated assets: item icons/sprites under `source/textures/*/items/*`, status icon PNGs under `source/status_icons`, status icon mappings such as `tools/build/statusicons.csv`, atlas packing behavior, or scripts that generate atlas data.
+Run the asset build workflow when a change affects generated runtime assets: item icons/sprites under `source/texturepacks/*/*/items/*`, overlay source files under `source/overlaypacks`, atlas packing behavior, or asset build scripts.
+
+To build the whole project, run the asset build, then format and lint Lua code:
+
+```powershell
+python tools/build_assets/build_assets.py
+python tools/luafmt/luafmt.py
+python tools/lualint/lualint.py
+```
 
 ## Lua Format
 

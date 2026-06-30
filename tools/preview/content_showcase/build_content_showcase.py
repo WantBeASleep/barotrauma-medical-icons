@@ -27,7 +27,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
 
 SIZE = (1920, 1080)
 FONT_DIR = PROJECT_ROOT / "source" / "fonts"
-TEXTURES_DIR = PROJECT_ROOT / "source" / "textures"
+TEXTURES_DIR = PROJECT_ROOT / "source" / "texturepacks" / "default"
 STATUS_ICON_DIR = PROJECT_ROOT / "tools" / "build" / "status_icons"
 OUTPUT_DIR = PROJECT_ROOT / "preview"
 
@@ -228,7 +228,7 @@ def draw_sonar_background() -> Image.Image:
 def icon_path(identifier: str, use_status_icons: bool) -> Path:
     if use_status_icons:
         return STATUS_ICON_DIR / f"{identifier}.png"
-    return TEXTURES_DIR / identifier / "icon.png"
+    return TEXTURES_DIR / identifier / "base" / "icon.png"
 
 
 def load_icon(identifier: str, use_status_icons: bool) -> Image.Image:
