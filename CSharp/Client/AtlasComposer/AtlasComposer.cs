@@ -29,44 +29,63 @@ namespace MedicalIcons
     public sealed class AtlasOverlayPackOperation
     {
         public string OverlayPackAtlasPath { get; set; } = string.Empty;
+        public double OverlayOffsetWithinIconX { get; set; }
+        public double OverlayOffsetWithinIconY { get; set; }
+        public double OverlayScale { get; set; } = 1d;
         public AtlasOverlayApply[] Overlays { get; set; } = Array.Empty<AtlasOverlayApply>();
 
         public AtlasOverlayPackOperation() { }
 
-        public AtlasOverlayPackOperation(string overlayPackAtlasPath, AtlasOverlayApply[] overlays)
+        public AtlasOverlayPackOperation(
+            string overlayPackAtlasPath,
+            double overlayOffsetWithinIconX,
+            double overlayOffsetWithinIconY,
+            double overlayScale,
+            AtlasOverlayApply[] overlays)
         {
             OverlayPackAtlasPath = overlayPackAtlasPath;
+            OverlayOffsetWithinIconX = overlayOffsetWithinIconX;
+            OverlayOffsetWithinIconY = overlayOffsetWithinIconY;
+            OverlayScale = overlayScale;
             Overlays = overlays;
         }
     }
 
     // One overlay application from an overlaypack atlas to the output atlas.
-    // SourceX/SourceY/SourceWidth/SourceHeight select the rectangle inside the overlaypack atlas.
-    // TargetX/TargetY choose where that rectangle is applied on the output atlas.
+    // OverlayAtlasSource* selects the rectangle inside the overlaypack atlas.
+    // OutputAtlasIcon* selects the top-left corner of the item icon in the output atlas.
     public sealed class AtlasOverlayApply
     {
-        public int SourceX { get; set; }
-        public int SourceY { get; set; }
-        public int SourceWidth { get; set; }
-        public int SourceHeight { get; set; }
-        public int TargetX { get; set; }
-        public int TargetY { get; set; }
+        public int OverlayAtlasSourceX { get; set; }
+        public int OverlayAtlasSourceY { get; set; }
+        public int OverlayAtlasSourceWidth { get; set; }
+        public int OverlayAtlasSourceHeight { get; set; }
+        public int OutputAtlasIconX { get; set; }
+        public int OutputAtlasIconY { get; set; }
 
         public AtlasOverlayApply() { }
 
-        public AtlasOverlayApply(int sourceX, int sourceY, int sourceWidth, int sourceHeight, int targetX, int targetY)
+        public AtlasOverlayApply(
+            int overlayAtlasSourceX,
+            int overlayAtlasSourceY,
+            int overlayAtlasSourceWidth,
+            int overlayAtlasSourceHeight,
+            int outputAtlasIconX,
+            int outputAtlasIconY)
         {
-            SourceX = sourceX;
-            SourceY = sourceY;
-            SourceWidth = sourceWidth;
-            SourceHeight = sourceHeight;
-            TargetX = targetX;
-            TargetY = targetY;
+            OverlayAtlasSourceX = overlayAtlasSourceX;
+            OverlayAtlasSourceY = overlayAtlasSourceY;
+            OverlayAtlasSourceWidth = overlayAtlasSourceWidth;
+            OverlayAtlasSourceHeight = overlayAtlasSourceHeight;
+            OutputAtlasIconX = outputAtlasIconX;
+            OutputAtlasIconY = outputAtlasIconY;
         }
     }
 
     public static class AtlasComposer
     {
+        private const int IconSize = 64;
+
         // Loads one input atlas PNG, applies rectangles from overlaypack atlas PNGs,
         // and saves the result into Storage. The output path is a Storage path,
         // for example "medical-icons/cache/icons.png".
@@ -149,6 +168,16 @@ namespace MedicalIcons
                 throw new AtlasComposerException("null_overlays", "Atlas overlay list must not be null.");
             }
 
+            if (double.IsNaN(operation.OverlayScale) || double.IsInfinity(operation.OverlayScale))
+            {
+                throw new AtlasComposerException("invalid_overlay_scale", "Atlas overlay scale must be a finite number.");
+            }
+
+            if (operation.OverlayScale <= 0d)
+            {
+                return 0;
+            }
+
             string overlayAtlasPath = ResolveInputFilePath(operation.OverlayPackAtlasPath, "overlaypack atlas");
             Texture2D overlayAtlasTexture = null;
 
@@ -168,6 +197,7 @@ namespace MedicalIcons
                         overlayAtlasPixels,
                         overlayAtlasTexture.Width,
                         overlayAtlasTexture.Height,
+                        operation,
                         overlay);
                     appliedCount++;
                 }
@@ -291,6 +321,7 @@ namespace MedicalIcons
             Color[] overlayAtlasPixels,
             int overlayAtlasWidth,
             int overlayAtlasHeight,
+            AtlasOverlayPackOperation operation,
             AtlasOverlayApply overlay)
         {
             if (overlay == null)
@@ -298,61 +329,139 @@ namespace MedicalIcons
                 throw new AtlasComposerException("null_overlay", "Atlas overlay must not be null.");
             }
 
-            if (overlay.SourceWidth <= 0 || overlay.SourceHeight <= 0)
+            if (overlay.OverlayAtlasSourceWidth <= 0 || overlay.OverlayAtlasSourceHeight <= 0)
             {
                 throw new AtlasComposerException("invalid_overlay_rect", "Atlas overlay source width and height must be positive.");
             }
 
             if (
-                overlay.SourceX < 0
-                || overlay.SourceY < 0
-                || overlay.SourceX + overlay.SourceWidth > overlayAtlasWidth
-                || overlay.SourceY + overlay.SourceHeight > overlayAtlasHeight)
+                overlay.OverlayAtlasSourceX < 0
+                || overlay.OverlayAtlasSourceY < 0
+                || overlay.OverlayAtlasSourceX + overlay.OverlayAtlasSourceWidth > overlayAtlasWidth
+                || overlay.OverlayAtlasSourceY + overlay.OverlayAtlasSourceHeight > overlayAtlasHeight)
             {
                 throw new AtlasComposerException(
                     "overlay_source_out_of_bounds",
                     string.Format(
                         "Overlay source rectangle is outside overlay atlas bounds: sourceX={0}, sourceY={1}, width={2}, height={3}, overlayAtlasWidth={4}, overlayAtlasHeight={5}.",
-                        overlay.SourceX,
-                        overlay.SourceY,
-                        overlay.SourceWidth,
-                        overlay.SourceHeight,
+                        overlay.OverlayAtlasSourceX,
+                        overlay.OverlayAtlasSourceY,
+                        overlay.OverlayAtlasSourceWidth,
+                        overlay.OverlayAtlasSourceHeight,
                         overlayAtlasWidth,
                         overlayAtlasHeight));
             }
 
+            OverlayPlacement placement = CreateOverlayPlacement(overlay, operation);
+
             if (
-                overlay.TargetX < 0
-                || overlay.TargetY < 0
-                || overlay.TargetX + overlay.SourceWidth > atlasWidth
-                || overlay.TargetY + overlay.SourceHeight > atlasHeight)
+                placement.OutputAtlasTargetX < 0
+                || placement.OutputAtlasTargetY < 0
+                || placement.OutputAtlasTargetX + placement.OutputAtlasTargetWidth > atlasWidth
+                || placement.OutputAtlasTargetY + placement.OutputAtlasTargetHeight > atlasHeight)
             {
                 throw new AtlasComposerException(
                     "overlay_out_of_bounds",
                     string.Format(
                         "Overlay target rectangle is outside atlas bounds: x={0}, y={1}, width={2}, height={3}, atlasWidth={4}, atlasHeight={5}.",
-                        overlay.TargetX,
-                        overlay.TargetY,
-                        overlay.SourceWidth,
-                        overlay.SourceHeight,
+                        placement.OutputAtlasTargetX,
+                        placement.OutputAtlasTargetY,
+                        placement.OutputAtlasTargetWidth,
+                        placement.OutputAtlasTargetHeight,
                         atlasWidth,
                         atlasHeight));
             }
 
-            for (int y = 0; y < overlay.SourceHeight; y += 1)
+            for (int y = 0; y < placement.OutputAtlasTargetHeight; y += 1)
             {
-                for (int x = 0; x < overlay.SourceWidth; x += 1)
+                int sourceOffsetY = Math.Min(
+                    placement.OverlayAtlasVisibleSourceHeight - 1,
+                    (int)Math.Floor((double)y
+                        * placement.OverlayAtlasVisibleSourceHeight
+                        / placement.OutputAtlasTargetHeight));
+
+                for (int x = 0; x < placement.OutputAtlasTargetWidth; x += 1)
                 {
-                    int overlayAtlasIndex = (overlay.SourceY + y) * overlayAtlasWidth + overlay.SourceX + x;
+                    int sourceOffsetX = Math.Min(
+                        placement.OverlayAtlasVisibleSourceWidth - 1,
+                        (int)Math.Floor((double)x
+                            * placement.OverlayAtlasVisibleSourceWidth
+                            / placement.OutputAtlasTargetWidth));
+
+                    int overlayAtlasIndex = (overlay.OverlayAtlasSourceY + sourceOffsetY) * overlayAtlasWidth
+                        + overlay.OverlayAtlasSourceX
+                        + sourceOffsetX;
                     Color source = overlayAtlasPixels[overlayAtlasIndex];
                     if (source.A == 0)
                     {
                         continue;
                     }
 
-                    int atlasIndex = (overlay.TargetY + y) * atlasWidth + overlay.TargetX + x;
+                    int atlasIndex = (placement.OutputAtlasTargetY + y) * atlasWidth + placement.OutputAtlasTargetX + x;
                     atlasPixels[atlasIndex] = AlphaComposite(source, atlasPixels[atlasIndex]);
                 }
+            }
+        }
+
+        // Mirrors Lua preview_renderer.lua overlay geometry: scale, crop from top-left
+        // when larger than an icon, then clamp final in-icon position.
+        private static OverlayPlacement CreateOverlayPlacement(AtlasOverlayApply overlay, AtlasOverlayPackOperation operation)
+        {
+            int scaledWidth = Math.Max(1, Round(overlay.OverlayAtlasSourceWidth * operation.OverlayScale));
+            int scaledHeight = Math.Max(1, Round(overlay.OverlayAtlasSourceHeight * operation.OverlayScale));
+            int targetWidth = Math.Min(IconSize, scaledWidth);
+            int targetHeight = Math.Min(IconSize, scaledHeight);
+
+            int sourceWidth = overlay.OverlayAtlasSourceWidth;
+            int sourceHeight = overlay.OverlayAtlasSourceHeight;
+            if (targetWidth < scaledWidth)
+            {
+                sourceWidth = Math.Max(
+                    1,
+                    Math.Min(overlay.OverlayAtlasSourceWidth, (int)Math.Floor(targetWidth / operation.OverlayScale)));
+            }
+            if (targetHeight < scaledHeight)
+            {
+                sourceHeight = Math.Max(
+                    1,
+                    Math.Min(overlay.OverlayAtlasSourceHeight, (int)Math.Floor(targetHeight / operation.OverlayScale)));
+            }
+
+            int overlayTargetWithinIconX = Round(Clamp(operation.OverlayOffsetWithinIconX, 0d, IconSize - targetWidth));
+            int overlayTargetWithinIconY = Round(Clamp(operation.OverlayOffsetWithinIconY, 0d, IconSize - targetHeight));
+
+            return new OverlayPlacement(
+                sourceWidth,
+                sourceHeight,
+                overlay.OutputAtlasIconX + overlayTargetWithinIconX,
+                overlay.OutputAtlasIconY + overlayTargetWithinIconY,
+                targetWidth,
+                targetHeight);
+        }
+
+        private sealed class OverlayPlacement
+        {
+            public int OverlayAtlasVisibleSourceWidth { get; private set; }
+            public int OverlayAtlasVisibleSourceHeight { get; private set; }
+            public int OutputAtlasTargetX { get; private set; }
+            public int OutputAtlasTargetY { get; private set; }
+            public int OutputAtlasTargetWidth { get; private set; }
+            public int OutputAtlasTargetHeight { get; private set; }
+
+            public OverlayPlacement(
+                int overlayAtlasVisibleSourceWidth,
+                int overlayAtlasVisibleSourceHeight,
+                int outputAtlasTargetX,
+                int outputAtlasTargetY,
+                int outputAtlasTargetWidth,
+                int outputAtlasTargetHeight)
+            {
+                OverlayAtlasVisibleSourceWidth = overlayAtlasVisibleSourceWidth;
+                OverlayAtlasVisibleSourceHeight = overlayAtlasVisibleSourceHeight;
+                OutputAtlasTargetX = outputAtlasTargetX;
+                OutputAtlasTargetY = outputAtlasTargetY;
+                OutputAtlasTargetWidth = outputAtlasTargetWidth;
+                OutputAtlasTargetHeight = outputAtlasTargetHeight;
             }
         }
 
@@ -378,6 +487,24 @@ namespace MedicalIcons
         private static byte ToByte(float value)
         {
             return (byte)Math.Max(0, Math.Min(255, (int)Math.Round(value * 255f)));
+        }
+
+        private static double Clamp(double value, double minValue, double maxValue)
+        {
+            if (value < minValue)
+            {
+                return minValue;
+            }
+            if (value > maxValue)
+            {
+                return maxValue;
+            }
+            return value;
+        }
+
+        private static int Round(double value)
+        {
+            return (int)Math.Floor(value + 0.5d);
         }
 
         // Input atlas and overlaypack atlas paths must be absolute real files.

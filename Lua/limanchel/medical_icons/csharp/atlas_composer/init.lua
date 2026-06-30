@@ -9,16 +9,16 @@
 ---@field operation AtlasComposerOperation
 ---@field input_atlas_path string
 ---@field output_storage_path string
----@field code MedicalIcons.AtlasComposerErrorCode|AtlasComposerWrapperErrorCode|string
+---@field code AtlasComposerErrorCode|AtlasComposerWrapperErrorCode|string
 ---@field message string|nil
 ---@field cause any
 
 ---@class AtlasComposerOptions
 ---@field type_name string|nil
----@field csharp_composer MedicalIcons.AtlasComposer|nil
+---@field csharp_composer AtlasComposerUserData|nil
 
 ---@class AtlasComposer
----@field compose fun(input_atlas_path: string, output_storage_path: string, operations: MedicalIcons.AtlasOverlayPackOperation[]): integer|nil, AtlasComposerError|nil
+---@field compose fun(input_atlas_path: string, output_storage_path: string, operations: AtlasOverlayPackOperation[]): integer|nil, AtlasComposerError|nil
 
 ---@class AtlasComposerLib
 ---@field new fun(options: AtlasComposerOptions|nil): AtlasComposer
@@ -63,7 +63,7 @@ end
 
 ---Returns a stable error code, preferring the C# exception Code field when present.
 ---@param cause any
----@return MedicalIcons.AtlasComposerErrorCode|AtlasComposerWrapperErrorCode|string
+---@return AtlasComposerErrorCode|AtlasComposerWrapperErrorCode|string
 function error_factory.get_code(cause)
     local code = error_factory.read_cause_field(cause, ERROR_CAUSE_CODE_FIELD)
     if code ~= nil and code ~= "" then
@@ -181,7 +181,7 @@ function atlas_composer_lib.new(options)
     local csharp_composer_unavailable = false
 
     ---Returns the cached C# atlas composer helper, registering and creating it on first use.
-    ---@return MedicalIcons.AtlasComposer|nil, AtlasComposerError|nil
+    ---@return AtlasComposerUserData|nil, AtlasComposerError|nil
     local function get_csharp_composer()
         if csharp_composer_unavailable then
             return nil, error_factory.new(OPERATION.init, type_name, "", "C# atlas composer is unavailable")
@@ -209,7 +209,7 @@ function atlas_composer_lib.new(options)
             return nil, error_factory.new(OPERATION.init, type_name, "", create_result)
         end
 
-        ---@cast create_result MedicalIcons.AtlasComposer
+        ---@cast create_result AtlasComposerUserData
         csharp_composer = create_result
         return csharp_composer, nil
     end
@@ -220,10 +220,11 @@ function atlas_composer_lib.new(options)
     ---Loads one atlas PNG, applies overlaypack rectangles, and writes a Storage PNG.
     ---
     ---`input_atlas_path` and every `overlay_pack_atlas_path` must be absolute filesystem paths.
+    ---Each operation carries one overlaypack-wide offset/scale setting; each overlay carries its overlay atlas source rect and output atlas icon position.
     ---`output_storage_path` must be relative to Barotrauma storage, matching the C# Storage contract.
     ---@param input_atlas_path string
     ---@param output_storage_path string
-    ---@param operations MedicalIcons.AtlasOverlayPackOperation[]
+    ---@param operations AtlasOverlayPackOperation[]
     ---@return integer|nil applied_count
     ---@return AtlasComposerError|nil err
     function atlas_composer.compose(input_atlas_path, output_storage_path, operations)
@@ -250,6 +251,7 @@ function atlas_composer_lib.new(options)
         end
 
         local ok, result = pcall(function()
+            ---@diagnostic disable-next-line: param-type-mismatch
             return composer.Compose(input_atlas_path, output_storage_path, operations)
         end)
 

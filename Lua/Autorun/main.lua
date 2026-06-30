@@ -13,6 +13,6 @@ local log_level = ENV == "prod" and log.levels.warning or log.levels.trace
 log.init("QoL - Medical Items", log_level)
 
 ---@type MedicalIconsMenu
-local menu = assert(loadfile(LUA_PATH .. "/menu/init.lua"))(MOD_PATH, LUA_PATH)
+local menu = assert(loadfile(LUA_PATH .. "/menu/init.lua"))(MOD_PATH, LUA_PATH, log)
 
-menu.init(log)
+menu.init()

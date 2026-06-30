@@ -15,7 +15,14 @@ local schema_utils = assert(loadfile(LUA_PATH .. "/schema/utils.lua"))(nil, LUA_
 local defaults = {
     version = SETTINGS_ACTUAL_VERSION,
     texturepack = "default",
-    overlaypacks = {},
+    overlaypacks = {
+        {
+            name = "status_icons",
+            x = 0,
+            y = 0,
+            scale = 1,
+        },
+    },
 }
 
 ---@class settings
@@ -115,7 +122,8 @@ function schema.validate(value)
             or type(overlaypack.x) ~= "number"
             or type(overlaypack.y) ~= "number"
             or type(overlaypack.scale) ~= "number"
-            or overlaypack.scale <= 0
+            or overlaypack.scale < 0
+            or overlaypack.scale > 3
         then
             error(consts.ERROR_INVALID_SCHEMA, 0)
         end
