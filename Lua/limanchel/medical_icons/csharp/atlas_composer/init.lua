@@ -14,7 +14,6 @@
 ---@field cause any
 
 ---@class AtlasComposerOptions
----@field log Logger|nil
 ---@field type_name string|nil
 ---@field csharp_composer MedicalIcons.AtlasComposer|nil
 
@@ -28,7 +27,7 @@
 local atlas_composer_lib = {}
 
 ---@type Logger|nil
-local log
+local _, _, log = ...
 
 local DEFAULT_TYPE_NAME = "MedicalIcons.AtlasComposer"
 local UNKNOWN_ERROR_CODE = "unknown"
@@ -177,7 +176,6 @@ end
 function atlas_composer_lib.new(options)
     options = options or {}
 
-    log = options.log
     local type_name = options.type_name or DEFAULT_TYPE_NAME
     local csharp_composer = options.csharp_composer
     local csharp_composer_unavailable = false

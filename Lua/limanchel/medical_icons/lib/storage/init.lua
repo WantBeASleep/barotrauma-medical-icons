@@ -15,7 +15,6 @@
 ---@field cause any
 
 ---@class StorageOptions
----@field log Logger
 ---@field type_name string|nil
 ---@field csharp_storage MedicalIcons.Storage|nil
 
@@ -35,7 +34,7 @@
 local storage_lib = {}
 
 ---@type Logger|nil
-local log
+local _, _, log = ...
 
 local UNKNOWN_ERROR_CODE = "unknown"
 local ERROR_CAUSE_CODE_FIELD = "Code"
@@ -175,7 +174,6 @@ function storage_lib.new(options)
         error("storage options are required")
     end
 
-    log = options.log
     local type_name = options.type_name
     local csharp_storage = options.csharp_storage
     local csharp_storage_unavailable = false

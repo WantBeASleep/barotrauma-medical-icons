@@ -4,48 +4,56 @@ local MOD_PATH
 ---@type string
 local LUA_PATH
 
--- The loader passes these paths through assert(loadfile(...))(MOD_PATH, LUA_PATH).
-MOD_PATH, LUA_PATH = ...
+---@type Logger
+local log
+
+-- The loader passes shared technical context through assert(loadfile(...))(...).
+MOD_PATH, LUA_PATH, log = ...
 
 ---@class MedicalIconsMenu
----@field init fun(logger: Logger)
+---@field init fun()
 
 ---@type MedicalIconsMenu
 local menu = {}
 
----@param logger Logger
 ---@return nil
-function menu.init(logger)
-    local settings = dofile(LUA_PATH .. "/menu/safe_setting.lua")(LUA_PATH)
-    local registry = dofile(LUA_PATH .. "/menu/registry.lua")(MOD_PATH, LUA_PATH)
-    local view = dofile(LUA_PATH .. "/menu/view/init.lua")(LUA_PATH)
-    local controller = dofile(LUA_PATH .. "/menu/controller.lua")
-    local pause_menu = dofile(LUA_PATH .. "/menu/pause_menu.lua")
-    local utils = dofile(LUA_PATH .. "/lib/utils/init.lua")
+function menu.init()
+    ---@type SafeSettings
+    local settings = assert(loadfile(LUA_PATH .. "/safe_setting.lua"))(MOD_PATH, LUA_PATH, log)
+    ---@type Registry
+    local registry = assert(loadfile(LUA_PATH .. "/registry.lua"))(MOD_PATH, LUA_PATH)
+    ---@type MenuView
+    local view = assert(loadfile(LUA_PATH .. "/menu/view/init.lua"))(MOD_PATH, LUA_PATH)
+    ---@type MenuController
+    local controller = assert(loadfile(LUA_PATH .. "/menu/controller.lua"))(MOD_PATH, LUA_PATH, log)
+    ---@type PauseMenu
+    local pause_menu = assert(loadfile(LUA_PATH .. "/menu/pause_menu.lua"))(MOD_PATH, LUA_PATH, log)
 
     local init_ok, init_err = pcall(function()
         registry.init()
-        settings.init(logger)
-        controller.init(settings, registry, view, logger, utils)
-        pause_menu.init(controller, logger)
+        settings.init()
+        view.init(registry)
+        controller.init(settings, view)
+        pause_menu.init(controller)
     end)
     if not init_ok then
-        logger.error(string.format("Medical Icons menu init failed: %s", tostring(init_err)))
+        log.error(string.format("Medical Icons menu init failed: %s", tostring(init_err)))
         error(init_err)
     end
 
     Hook.Patch("Barotrauma.GUI", "TogglePauseMenu", {}, function(_, _)
+        ---@diagnostic disable-next-line: missing-return
         pause_menu.sync_button()
     end, Hook.HookMethodType.After)
 
     Game.AddCommand("medical_icons", "Opens the Medical Icons menu.", function()
         local ok, err = pcall(pause_menu.force_open)
         if not ok then
-            logger.error(string.format("menu command failed: %s", tostring(err)))
+            log.error(string.format("menu command failed: %s", tostring(err)))
         end
     end)
 
-    logger.info("Medical Icons menu loaded")
+    log.info("Medical Icons menu loaded")
 end
 
 return menu

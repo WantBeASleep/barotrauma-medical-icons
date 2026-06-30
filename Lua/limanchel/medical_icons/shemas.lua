@@ -1,3 +1,0 @@
-local lua_path = ...
-
-return assert(loadfile(lua_path .. "/schema/init.lua"))(nil, lua_path)

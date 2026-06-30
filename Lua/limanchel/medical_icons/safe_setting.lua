@@ -4,13 +4,13 @@ local MOD_PATH
 ---@type string
 local LUA_PATH
 
-MOD_PATH, LUA_PATH = ...
+---@type Logger
+local log
+
+MOD_PATH, LUA_PATH, log = ...
 
 ---@type schemas
 local schema = assert(loadfile(LUA_PATH .. "/schema/init.lua"))(MOD_PATH, LUA_PATH)
-
----@type Logger
-local log
 
 ---@type Storage|nil
 local storage
@@ -24,12 +24,12 @@ local settings = {}
 local STORAGE_TYPE_NAME = "MedicalIcons.Storage"
 local SETTINGS_PATH = "medical-icons/settings.json"
 
----@class MenuSettings
----@field init fun(logger: Logger)
+---@class SafeSettings
+---@field init fun()
 ---@field safe_get_settings fun(): settings
 ---@field safe_save fun(new_settings: settings): boolean
 
----@type MenuSettings
+---@type SafeSettings
 local safe_setting = {}
 
 ---@param err StorageError|any
@@ -103,16 +103,13 @@ local function load_from_storage()
     save_to_storage()
 end
 
----@param logger Logger
 ---@return nil
-function safe_setting.init(logger)
-    log = logger
+function safe_setting.init()
     settings = schema.settings.get_defaults()
     storage = nil
 
     local ok, result = pcall(function()
-        return dofile(LUA_PATH .. "/lib/storage/init.lua").new({
-            log = log,
+        return assert(loadfile(LUA_PATH .. "/lib/storage/init.lua"))(MOD_PATH, LUA_PATH, log).new({
             type_name = STORAGE_TYPE_NAME,
         })
     end)
